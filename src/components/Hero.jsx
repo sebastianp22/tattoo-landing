@@ -1,77 +1,119 @@
+import heroImage from '../assets/hero-tattoo.jpg';
+
 function Hero() {
   return (
+    <>
+    {/* Hero con imagen de fondo */}
     <section style={{
-      minHeight: '600px',
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      color: '#fff',
-      textAlign: 'center',
-      padding: '40px 20px',
+      minHeight: '100vh',
+      backgroundImage: `url(${heroImage})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundAttachment: 'fixed',
+      position: 'relative'
     }}>
+      { /* Overlay oscuro */ }
       <div style={{
-        maxWidth: '800px' 
-        }}>
-        <h1 style={{
-          fontSize: '56px',
-          marginBottom: '20px',
-          fontWeight: 'bold',
-          textShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)'
-        }}>
-          Arte en tu piel
-        </h1>
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.4)'
+      }} />
+      </section>
 
+      {/* Bienvenida debajo de la imagen */}
+      <section style={{
+        backgroundColor: '#fff',
+        padding: '60px 20px',
+        textAlign: 'center'
+      }}>
+        <h2 style={{
+          fontSize: '42px',
+          marginBottom: '30px',
+          color: '#1a1a1a'
+        }}>
+          Bienvenido a mi sitio web oficial
+        </h2>
         <p style={{
-          fontSize: '20px',
-          marginBottom: '40px',
-          lineHeight: '1.6',
-          opacity: 0.95
+          fontSize: '18px',
+          lineHeight: '1.8',
+          maxWidth: '800px',
+          margin: '0 auto',
+          color: '#555'
         }}>
-          Descubre el poder de la tinta con nuestros diseños personalizados.
+          Aquí encontrarás mis últimos trabajos de tatuaje. 
+          Con más de [X] años de experiencia, me especializo en Black Work, Black&Grey Realism. 
+          Cada diseño es único y personalizado para contar tu historia.
         </p>
+      </section>
 
+      {/* Información de contacto */}
+      <section style={{
+        backgroundColor: '#f5f5f5',
+        padding: '40px 20px',
+        textAlign: 'center'
+      }}>
         <div style={{
-          display: 'flex',
-          gap: '20px',
-          justifyContent: 'center',
-          flexWrap: 'wrap'
-        }}>
-          <a href="#gallery" 
-          style={{
-            justifyContent: 'center',
-            backgroundColor: '#fff',
-            color: '#764ba2',
-            padding: '12px 30px',
-            borderRadius: '30px',
-            textDecoration: 'none',
-            fontSize: '18px',
-            fontWeight: 'bold',
-            boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)',
-            transition: 'transform 0.3s',
+          maxWidth: '600px',
+          margin: '0 auto'
           }}>
-            Ver Galería
-          </a>
-          <a href="#contact"
-          style={{
-            backgroundColor: 'transparent',
-            color: '#fff',
+            <h3 style={{
+              fontSize: '28px',
+              marginBottom: '20px',
+              color: '#1a1a1a'
+            }}>
+              [YIN.TTT]
+            </h3>
+            <p style={{
+              marginBottom: '10px',
+              color: '#555'
+            }}>
+              [DIRECCIÓN DEL ESTUDIO]
+            </p>
+            <p style={{
+              marginBottom: '10px',
+              color: '#555'
+            }}>
+              [PUNTA ARENAS, CHILE]
+            </p>
+            <p style={{
+              marginBottom: '20px'
+            }}>
+              <a href="TELÉFONO: +569 42443344" style={{
+                color: '#667eea',
+                textDecoration: 'none',
+                fontSize: '20px',
+                fontWeight: 'bold'
+              }}>
+                +569 42443344
+              </a>
+            </p>
+            <a href="mailto: [CORREO ELECTRÓNICO]" style={{
+              color: '#667eea',
+              textDecoration: 'none'
+            }}>
+              EMAIL
+            </a>
+          </div>
+
+          {/* Redes sociales */}
+          <div style={{
+            display: 'flex',
             justifyContent: 'center',
-            padding: '15px 40px',
-            borderRadius: '30px',
-            textDecoration: 'none',
-            fontSize: '18px',
-            fontWeight: 'bold',
-            border: '2px solid #fff',
-            transition: 'all 0.3s',
-            
-          }}
-          >
-            Contáctame
-          </a>
-        </div>
-      </div>
-    </section>
+            gap: '20px',
+            marginTop: '30px'
+          }}>
+            <a href="https://www.instagram.com/yin.ttt" target="_blank" rel="noopener noreferrer" style={{
+              fontSize: '32px',
+              color: '#333',
+              transition: 'color 0.3s'
+            }}>
+            </a>
+            </div>
+        </section>
+    </>
   );
 }
 
