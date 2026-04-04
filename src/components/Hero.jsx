@@ -1,4 +1,4 @@
-import heroImage from '../assets/hero-tattoo.jpg';
+import heroImage from '../assets/Hero.jpg';
 
 function Hero() {
   return (
