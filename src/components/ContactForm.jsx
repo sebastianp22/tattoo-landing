@@ -1,423 +1,420 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 function ContactForm() {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    message: ''
+    name: "",
+    email: "",
+    phone: "",
+    message: "",
   });
 
   const [errors, setErrors] = useState({});
   const [submitCount, setSubmitCount] = useState(0);
   const [isBlocked, setIsBlocked] = useState(false);
   const [blockTimer, setBlockTimer] = useState(0);
-  const [successMessage, setSuccessMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState("");
 
-  // Rate limiting: bloquear después de 3 intentos
   useEffect(() => {
     if (submitCount >= 3) {
       setIsBlocked(true);
-      setBlockTimer(300); // Bloquear por 5 minutos (300 segundos)
+      setBlockTimer(300);
     }
   }, [submitCount]);
 
-  // Contador de bloqueos
   useEffect(() => {
     if (isBlocked && blockTimer > 0) {
       const timer = setTimeout(() => {
-        setBlockTimer(blockTimer - 1);
+        setBlockTimer((prev) => prev - 1);
       }, 1000);
+
       return () => clearTimeout(timer);
-    } else if (blockTimer === 0 && isBlocked) {
+    }
+
+    if (isBlocked && blockTimer === 0) {
       setIsBlocked(false);
       setSubmitCount(0);
     }
-  }, [blockTimer, isBlocked]);
+  }, [isBlocked, blockTimer]);
 
-  // Validación del Email
   const validateEmail = (email) => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return regex.test(email);
   };
 
-  // Validación del Teléfono Chileno
   const validatePhone = (phone) => {
-    const regex = /^(?:\+?56)?(?:\s?0?9\s?)?[9876543]\d{7}$/;
-    return regex.test(phone.replace(/\s/g, ''));
+    const cleanedPhone = phone.replace(/\s/g, "");
+    const regex = /^(?:\+?56)?(?:0?9)?[9876543]\d{7}$/;
+    return regex.test(cleanedPhone);
   };
 
-  // Sanitización de entrada para prevenir XSS
   const sanitizeInput = (input) => {
     return input
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#x27;')
-    .replace(/\//g, '&#x2F;');
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#x27;")
+      .replace(/\//g, "&#x2F;");
   };
 
-  // Validación del formulario
   const validateForm = () => {
     const newErrors = {};
 
-    // Validación del Nombre
     if (!formData.name.trim()) {
-      newErrors.name = 'El nombre es obligatorio';
+      newErrors.name = "El nombre es obligatorio.";
     } else if (formData.name.trim().length < 2) {
-      newErrors.name = 'El nombre debe tener al menos 2 caracteres';
+      newErrors.name = "El nombre debe tener al menos 2 caracteres.";
     }
 
-    // Validación del Email
     if (!formData.email.trim()) {
-      newErrors.email = 'El email es obligatorio';
+      newErrors.email = "El email es obligatorio.";
     } else if (!validateEmail(formData.email)) {
-      newErrors.email = 'El email no es válido';
+      newErrors.email = "Ingresa un correo válido.";
     }
 
-    // Validación del Teléfono
     if (formData.phone.trim() && !validatePhone(formData.phone)) {
-      newErrors.phone = 'El teléfono no es válido. Debe ser un número chileno formato +56 9 XXXX XXXX';
+      newErrors.phone = "Ingresa un número chileno válido.";
     }
 
-    // Validación del Mensaje
     if (!formData.message.trim()) {
-      newErrors.message = 'El mensaje es obligatorio';
+      newErrors.message = "El mensaje es obligatorio.";
     } else if (formData.message.trim().length < 10) {
-      newErrors.message = 'El mensaje debe tener al menos 10 caracteres';
+      newErrors.message = "El mensaje debe tener al menos 10 caracteres.";
     }
 
-  return newErrors;
+    return newErrors;
   };
 
-  // Manejar cambios en inputs
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
-  
-    // Limpiar el error del campo cuando el usuario escribe
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
     if (errors[name]) {
-      setErrors({
-        ...errors,
-        [name]: ''
-      });
+      setErrors((prev) => ({
+        ...prev,
+        [name]: "",
+      }));
     }
   };
 
-  // Manejar envío del formulario
   const handleSubmit = (e) => {
     e.preventDefault();
-    setSuccessMessage('');
+    setSuccessMessage("");
 
-    // Verificar si el formulario está bloqueado
     if (isBlocked) {
-      const minutes = Math.floor(blockTimer / 60);
-      const seconds = blockTimer % 60;
-      alert (`Has alcanzado el límite de intentos. Por favor, espera ${minutes}m ${seconds}s minutos antes de intentar nuevamente.`);
       return;
     }
 
-    // Validar el formulario
     const validationErrors = validateForm();
 
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
-      setSubmitCount(submitCount + 1);
+      setSubmitCount((prev) => prev + 1);
       return;
     }
 
-    // Sanitizar los datos antes de enviarlos
     const sanitizedData = {
       name: sanitizeInput(formData.name.trim()),
       email: sanitizeInput(formData.email.trim()),
       phone: sanitizeInput(formData.phone.trim()),
-      message: sanitizeInput(formData.message.trim())
+      message: sanitizeInput(formData.message.trim()),
     };
 
-    // Aquí iría la lógica para envío real API, email service, etc.)
-    console.log('Datos enviados:', sanitizedData);
+    console.log("Datos enviados:", sanitizedData);
 
-    // Simular éxito
-    setSuccessMessage('¡Mensaje enviado con éxito! Te contactaremos pronto.');
+    setSuccessMessage("Mensaje enviado con éxito. Te contactaré pronto.");
     setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      message: ''});
+      name: "",
+      email: "",
+      phone: "",
+      message: "",
+    });
     setErrors({});
 
-    // Resetear despues de un envío exitoso
     setTimeout(() => {
-      setSuccessMessage('');
+      setSuccessMessage("");
     }, 5000);
   };
 
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}m ${remainingSeconds}s`;
+  };
+
+  const sectionStyle = {
+    backgroundColor: "#0a0a0a",
+    color: "#f5f5f5",
+    padding: "100px 20px",
+  };
+
+  const containerStyle = {
+    maxWidth: "1200px",
+    margin: "0 auto",
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+    gap: "40px",
+    alignItems: "start",
+  };
+
+  const infoStyle = {
+    display: "flex",
+    flexDirection: "column",
+    gap: "20px",
+  };
+
+  const formWrapperStyle = {
+    backgroundColor: "#111111",
+    border: "1px solid #222",
+    borderRadius: "14px",
+    padding: "50px",
+    boxShadow: "0 20px 50px rgba(0, 0, 0, 0.35)",
+    justifySelf: "center",
+  };
+
+  const labelStyle = {
+    display: "block",
+    marginBottom: "8px",
+    fontSize: "0.85rem",
+    letterSpacing: "2px",
+    textTransform: "uppercase",
+    color: "#bdbdbd",
+    justifySelf: "center",
+  };
+
+  const getInputStyle = (fieldName) => ({
+    width: "100%",
+    padding: "16px 18px",
+    backgroundColor: "#181818",
+    color: "#ffffff",
+    border: errors[fieldName] ? "1px solid #dc2626" : "1px solid #2f2f2f",
+    borderRadius: "14px",
+    outline: "none",
+    fontSize: "1rem",
+    transition: "all 0.2s ease",
+    marginBottom: "8px",
+  });
+
+  const errorStyle = {
+    color: "#f87171",
+    fontSize: "0.9rem",
+    marginBottom: "18px",
+  };
+
+  const statusBoxStyle = {
+    marginBottom: "20px",
+    padding: "14px 16px",
+    borderRadius: "14px",
+    fontSize: "0.95rem",
+    lineHeight: "1.5",
+  };
+
+  const buttonStyle = {
+    width: "100%",
+    padding: "16px 20px",
+    marginTop: "10px",
+    border: "none",
+    borderRadius: "14px",
+    backgroundColor: isBlocked ? "#2a2a2a" : "#f5f5f5",
+    color: isBlocked ? "#888" : "#0a0a0a",
+    fontWeight: "700",
+    fontSize: "1rem",
+    cursor: isBlocked ? "not-allowed" : "pointer",
+    transition: "all 0.2s ease",
+    letterSpacing: "0.5px",
+  };
+
+  const securityNoteStyle = {
+    marginTop: "18px",
+    fontSize: "0.9rem",
+    color: "#9ca3af",
+    textAlign: "center",
+  };
+
   return (
-    <section id ="contact" style={{ 
-      padding: '2rem', 
-      backgroundColor: '#f9f9f9', 
-      minHeight: '100vh',
-      }}>
-        <div style={{ 
-          maxWidth: '700px', 
-          margin: '0 auto' 
-          }}>
-            <h2 style={{
-              textAlign: 'center',
-              fontSize: '48px',
-              marginBottom: '15px',
-              color: 'white',
-              fontWeight: 'bold',
-              letterSpacing: '2px',
-              textTransform: 'uppercase',
-            }}>
-              Contacto
-            </h2>
+    <section id="contact" style={sectionStyle}>
+      <div style={containerStyle}>
+        <div style={infoStyle}>
+          <p
+            style={{
+              color: "#9ca3af",
+              textTransform: "uppercase",
+              letterSpacing: "3px",
+              fontSize: "0.8rem",
+              margin: 0,
+            }}
+          >
+            Contacto
+          </p>
 
-            <p style={{
-              textAlign: 'center',
-              fontSize: '18px',
-              marginBottom: '50px',
-              color: '#999',
-            }}>
-              ¿Tienes alguna pregunta o quieres trabajar juntos? ¡Envíame un mensaje!
-            </p>
+          <h2
+            style={{
+              fontSize: "clamp(2rem, 4vw, 3.5rem)",
+              lineHeight: "1.1",
+              margin: 0,
+            }}
+          >
+            Conversemos sobre tu próxima idea
+          </h2>
 
-            {/* Formulario de contacto */}
-            <form onSubmit={handleSubmit} style={{
-              backgroundColor: '1a1a1a',
-              padding: '40px',
-              borderRadius: '10px',
-              border: '1px solid #333',
-            }}>
+          <p
+            style={{
+              color: "#cfcfcf",
+              fontSize: "1.05rem",
+              lineHeight: "1.8",
+              margin: 0,
+              maxWidth: "520px",
+            }}
+          >
+            Si tienes una idea para tu próximo tatuaje, quieres cotizar una
+            sesión o resolver dudas sobre estilos y disponibilidad, envíame un
+            mensaje.
+          </p>
 
-              {/* Mensaje de éxito */}
-              {successMessage && (
-                <div style={{
-                  backgroundColor: '#10b981',
-                  padding: '15px',
-                  borderRadius: '8px',
-                  color: 'white',
-                  marginBottom: '25px',
-                  textAlign: 'center',
-                  fontWeight: 'bold',
-                }}>
-                  {successMessage}
-                </div>
-              )}
-
-              {/* Advertencia de rate limiting */}
-              {isBlocked && (
-                <div style={{
-                  backgroundColor: '#ef4444',
-                  color: 'white',
-                  padding: '15px',
-                  borderRadius: '8px',
-                  marginBottom: '25px',
-                  textAlign: 'center'
-                }}>
-                  Has alcanzado el límite de intentos. Por favor, espera 
-                  {Math.floor(blockTimer / 60)}m {blockTimer % 60}s antes de intentar nuevamente.
-                </div>
-              )}
-              
-              {/* Nombre */}
-              <div style={{ marginBottom: '25px' }}>
-                <label style={{ 
-                  display: 'block', 
-                  color: 'white',
-                  marginBottom: '8px', 
-                  fontSize: '14px',
-                  fontWeight: 'bold', 
-                  letterSpacing: '0.5px',
-                  }}>
-                    Nombre *
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    style={{
-                      width: '100%',
-                      padding: '15px',
-                      fontSize: '16px',
-                      borderRadius: '6px',
-                      border: errors.name ? '2px solid #ef4444' : '1px solid #333',
-                      backgroundColor: '#0a0a0a',
-                      color: 'white',
-                      outline: 'none',
-                      transition: 'border 0.3s',
-                    }}
-                    onFocus={(e) => e.target.style.border = '1px solid #667eea'}
-                    onBlur={(e) => e.target.style.border = errors.name ? '2px solid #ef4444' : '1px solid #333'}
-                  />
-                  {errors.name && (<p style={{ 
-                    color: '#ef4444', 
-                    marginTop: '5px', 
-                    fontSize: '14px' 
-                    }}>{errors.name}</p>)}
-                    </div>
-
-                    {/* Email */}
-                    <div style={{ marginBottom: '25px' }}>
-                      <label style={{ 
-                        display: 'block', 
-                        color: 'white',
-                        marginBottom: '8px', 
-                        fontSize: '14px',
-                        fontWeight: 'bold', 
-                        letterSpacing: '0.5px',
-                        }}>
-                          EMAIL *
-                        </label>
-                        <input
-                          type="email"
-                          name="email"
-                          value={formData.email}
-                          onChange={handleChange}
-                          style={{
-                            width: '100%',
-                            padding: '15px',
-                            fontSize: '16px',
-                            borderRadius: '6px',
-                            border: errors.email ? '2px solid #ef4444' : '1px solid #333',
-                            backgroundColor: '#0a0a0a',
-                            color: 'white',
-                            outline: 'none'
-                          }}
-                          onFocus={(e) => e.target.style.border = '1px solid #667eea'}
-                          onBlur={(e) => e.target.style.border = errors.email ? '2px solid #ef4444' : '1px solid #333'}
-                        />
-                        {errors.email && (<p style={{ 
-                          color: '#ef4444', 
-                          marginTop: '5px', 
-                          fontSize: '14px' 
-                          }}>{errors.email}</p>)}
-                    </div>
-
-                    {/* Teléfono */}
-                    <div style={{ marginBottom: '25px' }}>
-                      <label style={{
-                        display: 'block', 
-                        color: 'white',
-                        marginBottom: '8px', 
-                        fontSize: '14px',
-                        fontWeight: 'bold', 
-                        letterSpacing: '0.5px',
-                        }}>
-                          Teléfono *
-                        </label>
-                        <input
-                          type="tel"
-                          name="phone"
-                          value={formData.phone}
-                          onChange={handleChange}
-                          style={{
-                            width: '100%',
-                            padding: '15px',
-                            fontSize: '16px',
-                            borderRadius: '6px',
-                            border: errors.phone ? '2px solid #ef4444' : '1px solid #333',
-                            backgroundColor: '#0a0a0a',
-                            color: 'white',
-                            outline: 'none'
-                          }}
-                          onFocus={(e) => e.target.style.border = '1px solid #667eea'}
-                          onBlur={(e) => e.target.style.border = errors.phone ? '2px solid #ef4444' : '1px solid #333'}
-                        />
-                        {errors.phone && (<p style={{ 
-                          color: '#ef4444', 
-                          marginTop: '5px', 
-                          fontSize: '14px' 
-                          }}>{errors.phone}</p>)}
-                    </div>
-
-                    {/* Mensaje */}
-                    <div style={{ marginBottom: '25px' }}>
-                      <label style={{
-                        display: 'block', 
-                        color: 'white',
-                        marginBottom: '8px', 
-                        fontSize: '14px',
-                        fontWeight: 'bold', 
-                        letterSpacing: '0.5px',
-                        }}>
-                          MENSAJE *
-                        </label>
-                        <textarea
-                          name="message"
-                          value={formData.message}
-                          onChange={handleChange}
-                          style={{
-                            width: '100%',
-                            padding: '15px',
-                            fontSize: '16px',
-                            borderRadius: '6px',
-                            border: errors.message ? '2px solid #ef4444' : '1px solid #333',
-                            backgroundColor: '#0a0a0a',
-                            color: 'white',
-                            outline: 'none',
-                            resize: 'vertical'
-                          }}
-                          onFocus={(e) => e.target.style.border = '1px solid #667eea'}
-                          onBlur={(e) => e.target.style.border = errors.message ? '2px solid #ef4444' : '1px solid #333'}
-                        />
-                        {errors.message && (<p style={{ 
-                          color: '#ef4444', 
-                          marginTop: '5px', 
-                          fontSize: '14px' 
-                          }}>{errors.message}</p>)}
-                    </div>
-
-                    {/* Botón de envío */}
-                    <button type="submit" style={{
-                      width: '100%',
-                      padding: '18px',
-                      fontSize: '16px',
-                      borderRadius: '8px',
-                      border: 'none',
-                      letterSpacing: '1px',
-                      backgroundColor: isBlocked ? '#666' : 'white',
-                      textTransform: 'uppercase',
-                      color: isBlocked ? '#999' : '#0a0a0a',
-                      cursor: isBlocked ? 'not-allowed' : 'pointer',
-                      transition: 'all 0.3s'
-                    }} 
-                    onMouseEnter={(e) => {
-                      if (!isBlocked) {
-                        e.target.style.backgroundColor = '#e0e0e0';
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!isBlocked) {
-                        e.target.style.backgroundColor = 'white';
-                      }
-                    }}
-                    >
-                      {isBlocked ? 'Envío bloqueado' : 'Enviar Mensaje'}
-                    </button>
-
-                    {/* Información de seguridad */}
-                    <p style={{
-                      textAlign: 'center',
-                      fontSize: '13px',
-                      color: '#666',
-                      marginTop: '20px',
-                      lineHeight: '1.6'
-                    }}>
-                      🔒 Formulario protegido con validación anti-XSS y rate limiting
-                    </p>
-            </form>
+          <div
+            style={{
+              display: "grid",
+              gap: "14px",
+              marginTop: "10px",
+              color: "#d4d4d4",
+            }}
+          >
+            <span>📍 Punta Arenas, Chile</span>
+            <span>📞 +56 9 4244 3344</span>
+            <span>📸 Instagram: @yin.ttt</span>
+          </div>
         </div>
+
+        <div style={formWrapperStyle}>
+          {successMessage && (
+            <div
+              style={{
+                ...statusBoxStyle,
+                backgroundColor: "rgba(34, 197, 94, 0.12)",
+                border: "1px solid rgba(34, 197, 94, 0.35)",
+                color: "#86efac",
+              }}
+            >
+              {successMessage}
+            </div>
+          )}
+
+          {isBlocked && (
+            <div
+              style={{
+                ...statusBoxStyle,
+                backgroundColor: "rgba(239, 68, 68, 0.10)",
+                border: "1px solid rgba(239, 68, 68, 0.30)",
+                color: "#fca5a5",
+              }}
+            >
+              Has alcanzado el límite de intentos. Espera{" "}
+              {formatTime(blockTimer)} antes de intentar nuevamente.
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit}>
+            <div style={{ marginBottom: "8px" }}>
+              <label htmlFor="name" style={labelStyle}>
+                Nombre
+              </label>
+              <input
+                id="name"
+                type="text"
+                name="name"
+                placeholder="Tu nombre"
+                value={formData.name}
+                onChange={handleChange}
+                style={getInputStyle("name")}
+              />
+              {errors.name && <p style={errorStyle}>{errors.name}</p>}
+            </div>
+
+            <div style={{ marginBottom: "18px" }}>
+              <label htmlFor="email" style={labelStyle}>
+                Email
+              </label>
+              <input
+                id="email"
+                type="email"
+                name="email"
+                placeholder="tuemail@ejemplo.com"
+                value={formData.email}
+                onChange={handleChange}
+                style={getInputStyle("email")}
+              />
+              {errors.email && <p style={errorStyle}>{errors.email}</p>}
+            </div>
+
+            <div style={{ marginBottom: "18px" }}>
+              <label htmlFor="phone" style={labelStyle}>
+                Teléfono
+              </label>
+              <input
+                id="phone"
+                type="tel"
+                name="phone"
+                placeholder="+56 9 1234 5678"
+                value={formData.phone}
+                onChange={handleChange}
+                style={getInputStyle("phone")}
+              />
+              {errors.phone && <p style={errorStyle}>{errors.phone}</p>}
+            </div>
+
+            <div style={{ marginBottom: "18px" }}>
+              <label htmlFor="message" style={labelStyle}>
+                Mensaje
+              </label>
+              <textarea
+                id="message"
+                name="message"
+                placeholder="Cuéntame tu idea, estilo, tamaño aproximado y zona del cuerpo."
+                value={formData.message}
+                onChange={handleChange}
+                rows="6"
+                style={{
+                  ...getInputStyle("message"),
+                  resize: "vertical",
+                  minHeight: "140px",
+                }}
+              />
+              {errors.message && <p style={errorStyle}>{errors.message}</p>}
+            </div>
+
+            <button
+              type="submit"
+              disabled={isBlocked}
+              style={buttonStyle}
+              onMouseEnter={(e) => {
+                if (!isBlocked) {
+                  e.target.style.transform = "translateY(-2px)";
+                  e.target.style.backgroundColor = "#ffffff";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isBlocked) {
+                  e.target.style.transform = "translateY(0)";
+                  e.target.style.backgroundColor = "#f5f5f5";
+                }
+              }}
+            >
+              {isBlocked ? "Envío bloqueado" : "Enviar mensaje"}
+            </button>
+
+            <p style={securityNoteStyle}>
+              🔒 Formulario con validación, sanitización básica y limitación de
+              intentos.
+            </p>
+          </form>
+        </div>
+      </div>
     </section>
   );
 }
 
 export default ContactForm;
-
-
-
