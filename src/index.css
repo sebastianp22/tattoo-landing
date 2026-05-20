@@ -1,0 +1,261 @@
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family:
+    'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans',
+    Arial, sans-serif;
+  background-color: #050505;
+  color: #f5f5f5;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.app-shell {
+  min-height: 100vh;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(5, 5, 5, 0.82) 0%,
+      rgba(8, 8, 8, 0.88) 45%,
+      rgba(10, 10, 10, 0.94) 100%
+    ),
+    url('/Hero.jpg') center center / cover no-repeat fixed;
+}
+
+.section-container {
+  width: min(1200px, calc(100% - 40px));
+  margin: 0 auto;
+}
+
+.section-dark {
+  min-height: 400px;
+  padding: 80px 0;
+  color: #f5f5f5;
+  backdrop-filter: blur(2px);
+}
+
+.section-label {
+  margin: 0 0 12px;
+  color: #c9a96e;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.82rem;
+}
+
+.section-title {
+  margin: 0 0 16px;
+  font-size: clamp(2rem, 5vw, 3rem);
+  line-height: 1.1;
+}
+
+.section-description {
+  margin: 0 0 32px;
+  max-width: 700px;
+  line-height: 1.7;
+  color: #b5b5b5;
+}
+
+/* HERO */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 120px 0 80px;
+}
+
+.hero-inner {
+  width: min(1200px, calc(100% - 40px));
+  margin: 0 auto;
+}
+
+.hero-content {
+  max-width: 760px;
+}
+
+.hero-kicker {
+  margin: 0 0 16px;
+  color: #c9a96e;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.82rem;
+}
+
+.hero-title {
+  margin: 0 0 20px;
+  font-size: clamp(3rem, 7vw, 5.4rem);
+  line-height: 0.96;
+  letter-spacing: -0.03em;
+}
+
+.hero-description {
+  margin: 0 0 28px;
+  max-width: 640px;
+  color: #d0d0d0;
+  line-height: 1.8;
+  font-size: 1.05rem;
+}
+
+.hero-meta {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 32px;
+  color: #d6d6d6;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.hero-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  padding: 0 22px;
+  border-radius: 999px;
+  font-weight: 700;
+  transition: 0.25s ease;
+}
+
+.hero-button-primary {
+  background: #c9a96e;
+  color: #111111;
+}
+
+.hero-button-primary:hover {
+  filter: brightness(1.05);
+}
+
+.hero-button-secondary {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.04);
+  color: #f5f5f5;
+}
+
+.hero-button-secondary:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* GALERÍA */
+.gallery-category {
+  margin-top: 56px;
+}
+
+.gallery-category-inner {
+  width: min(1120px, calc(100% - 72px));
+  margin: 0 auto;
+}
+
+.gallery-category-title {
+  margin: 0 0 20px;
+  font-size: 1.5rem;
+  color: #f5f5f5;
+  line-height: 1.2;
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.gallery-card {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.gallery-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ABOUT */
+.about-copy {
+  max-width: 760px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .app-shell {
+    background:
+      linear-gradient(
+        180deg,
+        rgba(5, 5, 5, 0.88) 0%,
+        rgba(8, 8, 8, 0.92) 45%,
+        rgba(10, 10, 10, 0.96) 100%
+      ),
+      url('/Hero.jpg') center center / cover no-repeat;
+  }
+
+  .section-dark {
+    padding: 64px 0;
+  }
+
+  .hero {
+    min-height: auto;
+    padding: 140px 0 64px;
+  }
+
+  .gallery-category-inner {
+    width: min(100%, calc(100% - 40px));
+  }
+
+  .gallery-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .section-container,
+  .hero-inner,
+  .gallery-category-inner {
+    width: min(100%, calc(100% - 24px));
+  }
+
+  .hero-title {
+    font-size: clamp(2.4rem, 11vw, 3.6rem);
+  }
+
+  .hero-description {
+    font-size: 1rem;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+  }
+
+  .hero-button {
+    width: 100%;
+  }
+
+  .gallery-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .gallery-category-title {
+    font-size: 1.3rem;
+  }
+}
