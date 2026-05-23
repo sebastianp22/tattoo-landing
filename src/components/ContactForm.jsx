@@ -174,7 +174,7 @@ function ContactForm() {
             marginBottom: '12px',
           }}
         >
-          Reserva tu prÃ³xima sesiÃ³n
+          Reserva tu próxima sesión
         </h2>
 
         <p
